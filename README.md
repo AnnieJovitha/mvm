@@ -1,12 +1,13 @@
 MVM ~ Mobile Vaadin Maps
 ========================
 
-This is a simple demo and web application, built after  some "can I do this or that with TouchKit/Vaadin" questions. This is not an example how you should build productions applications. For example there is no persistency at all, data is stored in memory only.
+This is a simple demo and test application, built after some "can I do this or that with TouchKit/Vaadin" questions. This is not an example on how you should build productions applications. For example there is no persistency at all, data is stored in memory only.
 
 To build this project you'll need to have snapshot builds of TouchKit 2 and
 OpenLayers Wrapper. Should work with release versions of them as well, but I fixed some issues in both while building this example. So if you want to play with this project do svn co and mvn install stuff in these projects:
 
 http://dev.vaadin.com/svn/branches/TouchKit2/vaadin-touchkit-agpl/
+
 http://vopenlayers.googlecode.com/svn/trunk/
 
 
@@ -15,10 +16,10 @@ Tricks that this project demonstrates
 
  * "How do I create application with remember me functionality?"
   * Check MobileVaadinMaps class. Implementation is bit more complex than usually needed, as it is tuned for ios home screen web apps and application cache.
- * "Can I draw points and lines on a Map"
-  * See MainView and updateMyRoute() function
+ * "Can I draw points and lines on a map in Vaadin?"
+  * Of course you can! See MainView and updateMyRoute() function. This app uses OpenStreetMap background map and optionally some terrain maps in Finland from national mapping agency, Maanmittauslaitos. OpenLayers supports huge amount of different layer types so almost anything is possible.
  * "Why don't TouchKit have all those fancy animations that are in competitor X?"
-  * Example app makes settings panel visible with "flip" effect. In Vaadin apps this kind of stuff belongs to eye candy category that should be in themes. Both map and settings view are actually all the time "visible", but only one of them is displayed with some CSS stuff. Changes use css3 transitions to make the flip effect. Check styles.css file and MainView.
+  * It is feature of "HTML5", not TouchKit. This example app makes settings panel visible with "flip" effect. In Vaadin apps this kind of stuff eye candy belongs to themes. Both map and settings view are actually all the time rendered, but only one of them is displayed at once with some lines of CSS magic. Changing the view use css3 transitions to make the flip effect. Works very smoothly on modern iOS and Android devices. Check styles.css file and MainView.
  * "How to access device Camera? Do I need to use PhoneGap?"
   * Don't use PhoneGap. Modern iOS and Android devices work perfectly without it if it is just camera you need. Use Upload component. In this example I'm using EasyUploads to make things even simpler. Check PlaceMarkEditor.
  * "How do I make iPhone 5 use whole screen estate in 'home screen' mode?"

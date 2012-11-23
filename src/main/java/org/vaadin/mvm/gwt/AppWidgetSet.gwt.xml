@@ -1,0 +1,21 @@
+<module>
+	<!-- WS Compiler: manually edited -->
+
+	<!-- Inherit DefaultWidgetSet -->
+	<inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
+
+	<inherits name="com.vaadin.addon.touchkit.gwt.TouchKitWidgetSet" />
+
+<!-- 	<inherits name="org.vaadin.vol.VolWidgetsetWithHostedScript" /> -->
+	<inherits name="org.vaadin.vol.VolWidgetset" />
+
+	<script src="OpenLayers.js"></script>
+	
+	<set-configuration-property
+		name='touchkit.manifestlinker.additionalCacheRoot'
+		value='src/main/webapp/VAADIN/themes/mvm:../../../VAADIN/themes/mvm' />
+  
+    <inherits name="org.vaadin.easyuploads.EasyuploadsWidgetset" />
+
+
+</module>

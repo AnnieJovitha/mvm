@@ -1,0 +1,11 @@
+
+.classpath
+
+.project
+
+.settings/
+
+target/
+
+src/main/webapp/VAADIN/widgetsets/
+src/main/java/rebel.xml

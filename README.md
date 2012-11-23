@@ -10,6 +10,8 @@ http://dev.vaadin.com/svn/branches/TouchKit2/vaadin-touchkit-agpl/
 
 http://vopenlayers.googlecode.com/svn/trunk/
 
+A version of this is deployed to my budget server at, but don't expect it to be fast or always up:
+http://v3.tahvonen.fi/mvm/
 
 Tricks that this project demonstrates
 -------------------------------------

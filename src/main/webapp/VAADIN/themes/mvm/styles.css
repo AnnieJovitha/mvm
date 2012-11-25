@@ -1,5 +1,9 @@
 @import "../base/styles.css";
 
+.v-app {
+	/* Gray background to make flip effect more visible. */
+	background: rgb(82, 85, 90) !important;
+}
 
 /* ROTATION effect for options view */
 .mainview>div>div {
@@ -35,7 +39,18 @@
 
 /* Bigger font for buttons in nav bar (we use unicode characters as icons in this app) */
 .v-touchkit-navbar .v-button-caption {
-	font-size: 20px;
+	font-size: 26px;
+}
+
+/* TabbarView not scrollable by default */
+.v-touchkit-tabbar-wrapper {
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	right: 0;
+	left: 0;
+	top: 0;
+	bottom: 42px;
+	position: absolute;
 }
 
 /* OL styling */

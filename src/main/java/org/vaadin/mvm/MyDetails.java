@@ -27,9 +27,12 @@ public class MyDetails extends CssLayout implements Property.ValueChangeListener
 		setCaption("My details");
 		setIcon(new ThemeResource("settings.png"));
 		
-		addComponent(new Label(
-				"<div style='padding:0px 20px 10px 20px;'><h1>MVM</h1>This is a test and demo app for some Vaadin TouchKit technologies. <br/><strong>Note,</strong> there is currently no persistency in this demo app. When server is restarted, all saved stuff will get lost. Sorry.</div>",
+		VerticalComponentGroup about = new VerticalComponentGroup();
+		about.setCaption("About MVM");
+		about.addComponent(new Label(
+				"<div style='padding: 10px 0;'>This is a test and demo app for some Vaadin TouchKit technologies. <br/><strong>Note,</strong> there is currently no persistency in this demo app. When server is restarted, all saved stuff will get lost. Sorry.</div>",
 				Label.CONTENT_XHTML));
+		addComponent(about);
 		
 		vcg.setCaption("My details");
 		addComponent(vcg);

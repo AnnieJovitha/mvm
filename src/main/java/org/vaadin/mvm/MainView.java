@@ -37,6 +37,7 @@ import com.vaadin.addon.touchkit.service.PositionCallback;
 import com.vaadin.addon.touchkit.ui.HorizontalComponentGroup;
 import com.vaadin.addon.touchkit.ui.NavigationView;
 import com.vaadin.addon.touchkit.ui.TouchKitWindow;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -46,6 +47,7 @@ import com.vaadin.ui.ProgressIndicator;
 public class MainView extends NavigationView implements PositionCallback,
 		ClickListener, VectorDrawnListener, VectorSelectedListener {
 
+	private static final ThemeResource SETTINGS_ICON = new ThemeResource("settings_g.png");
 	private static final int MAX_POINTS = 100;
 	private boolean keepTracking = false;
 	private boolean drawRoute = false;
@@ -71,7 +73,7 @@ public class MainView extends NavigationView implements PositionCallback,
 		protected String getCss(com.vaadin.ui.Component c) {
 			// TODO move this stuff to styles.css
 			if (c == progressIndicator) {
-				return "width:0px;height:0px";
+				return "margin-left:-2000px;;overflow:hidden;";
 			}
 			String css = "position:absolute;top:0;left:0;";
 			if (c == settings) {
@@ -107,6 +109,15 @@ public class MainView extends NavigationView implements PositionCallback,
 		vl.addListener((VectorDrawnListener) this);
 		vl.addListener((VectorSelectedListener) this);
 		vl.setSelectionMode(SelectionMode.SIMPLE);
+
+		/*
+		 * Android font don't contain all cool unicode characters, as a fallback
+		 * use graphics
+		 */
+		optionsButton.setCaption(null);
+		optionsButton.setIcon(SETTINGS_ICON);
+		addPlacemark.setCaption(null);
+		addPlacemark.setIcon(new ThemeResource("placemark_g.png"));
 	}
 
 	@Override
@@ -315,10 +326,12 @@ public class MainView extends NavigationView implements PositionCallback,
 	private void toggleOptions() {
 		if (getStyleName().contains("options-on")) {
 			removeStyleName("options-on");
-			optionsButton.setCaption("⚒");
+			optionsButton.setCaption(null);
+			optionsButton.setIcon(SETTINGS_ICON);
 			mapTools.setVisible(true);
 		} else {
 			addStyleName("options-on");
+			optionsButton.setIcon(null);
 			optionsButton.setCaption("✓");
 			mapTools.setVisible(false);
 			settings.refresh();
@@ -411,21 +424,28 @@ public class MainView extends NavigationView implements PositionCallback,
 
 	public void vectorSelected(VectorSelectedEvent event) {
 		Vector vector = event.getVector();
-		if(vector == myPlace) {
+		if (vector == myPlace) {
 			getWindow().showNotification("That is you!");
 		} else {
-			
-			LatLng point1 = new LatLng(myPlace.getPoint().getLat(), myPlace.getPoint().getLon());
-			LatLng point2 = new LatLng(vector.getPoints()[0].getLat(), vector.getPoints()[0].getLon());
-			double distanceInKilometers = LatLngTool.distance(point1, point2, LengthUnit.KILOMETER);
-			
+
+			LatLng point1 = new LatLng(myPlace.getPoint().getLat(), myPlace
+					.getPoint().getLon());
+			LatLng point2 = new LatLng(vector.getPoints()[0].getLat(),
+					vector.getPoints()[0].getLon());
+			double distanceInKilometers = LatLngTool.distance(point1, point2,
+					LengthUnit.KILOMETER);
+
 			Object data = vector.getData();
 			if (data instanceof Person) {
 				Person p = (Person) data;
-				getWindow().showNotification(String.format("That is your friend %s, %.2f km away", p.getNickName(), distanceInKilometers));
+				getWindow().showNotification(
+						String.format("That is your friend %s, %.2f km away",
+								p.getNickName(), distanceInKilometers));
 			} else if (data instanceof PlaceMark) {
 				PlaceMark pm = (PlaceMark) data;
-				getWindow().showNotification(String.format("That is %s, %.2f km away", pm.getName(), distanceInKilometers));
+				getWindow().showNotification(
+						String.format("That is %s, %.2f km away", pm.getName(),
+								distanceInKilometers));
 			}
 		}
 		vl.setSelectedVector(null);

@@ -51,7 +51,7 @@ public class MainView extends NavigationView implements PositionCallback,
 	private static final int MAX_POINTS = 100;
 	private boolean keepTracking = false;
 	private boolean drawRoute = false;
-	List<Point> lastPoints = new LinkedList<Point>();
+	private List<Point> lastPoints = new LinkedList<Point>();
 
 	private Map<Person, PointVector> displayedPersons = new HashMap<Person, PointVector>();
 	private Map<PlaceMark, PointVector> displayedPlaces = new HashMap<PlaceMark, PointVector>();
@@ -71,15 +71,10 @@ public class MainView extends NavigationView implements PositionCallback,
 
 	private CssLayout content = new CssLayout() {
 		protected String getCss(com.vaadin.ui.Component c) {
-			// TODO move this stuff to styles.css
 			if (c == progressIndicator) {
-				return "margin-left:-2000px;;overflow:hidden;";
+				return "margin-left:-2000px;overflow:hidden;";
 			}
-			String css = "position:absolute;top:0;left:0;";
-			if (c == settings) {
-				css += "bottom:0;";
-			}
-			return css;
+			return "position:absolute;top:0;right;left:0;bottom:0;";
 		};
 	};
 
@@ -225,7 +220,7 @@ public class MainView extends NavigationView implements PositionCallback,
 		getWindow().detectCurrentPosition(this);
 	}
 
-	private Person getUser() {
+	public Person getUser() {
 		return ((MobileVaadinMaps) getApplication()).getUser();
 	}
 
@@ -234,6 +229,10 @@ public class MainView extends NavigationView implements PositionCallback,
 		getUser().setLastLocation(
 				new Point(position.getLongitude(), position.getLatitude()));
 		updateMap();
+	}
+	
+	public List<Point> getLastPoints() {
+		return lastPoints;
 	}
 
 	public void updateMap() {
@@ -427,28 +426,30 @@ public class MainView extends NavigationView implements PositionCallback,
 		if (vector == myPlace) {
 			getWindow().showNotification("That is you!");
 		} else {
-
-			LatLng point1 = new LatLng(myPlace.getPoint().getLat(), myPlace
-					.getPoint().getLon());
-			LatLng point2 = new LatLng(vector.getPoints()[0].getLat(),
-					vector.getPoints()[0].getLon());
-			double distanceInKilometers = LatLngTool.distance(point1, point2,
-					LengthUnit.KILOMETER);
+			
 
 			Object data = vector.getData();
 			if (data instanceof Person) {
-				Person p = (Person) data;
-				getWindow().showNotification(
-						String.format("That is your friend %s, %.2f km away",
-								p.getNickName(), distanceInKilometers));
+				showFriendDetails(vector, data);
 			} else if (data instanceof PlaceMark) {
-				PlaceMark pm = (PlaceMark) data;
-				getWindow().showNotification(
-						String.format("That is %s, %.2f km away", pm.getName(),
-								distanceInKilometers));
+				new PlaceMarkEditor(this, addPlacemark, (PlaceMark) data);
 			}
 		}
 		vl.setSelectedVector(null);
+	}
+
+	private void showFriendDetails(Vector vector, Object data) {
+		LatLng point1 = new LatLng(myPlace.getPoint().getLat(), myPlace
+				.getPoint().getLon());
+		LatLng point2 = new LatLng(vector.getPoints()[0].getLat(),
+				vector.getPoints()[0].getLon());
+		double distanceInKilometers = LatLngTool.distance(point1, point2,
+				LengthUnit.KILOMETER);
+		
+		Person p = (Person) data;
+		getWindow().showNotification(
+				String.format("That is your friend %s, %.2f km away",
+						p.getNickName(), distanceInKilometers));
 	}
 
 }

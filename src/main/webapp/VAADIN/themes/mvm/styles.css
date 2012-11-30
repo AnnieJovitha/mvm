@@ -42,6 +42,24 @@
 	font-size: 26px;
 }
 
+/* Styling for image upload */
+.photoupload .v-button {
+	width: 56px;
+}
+.photoupload .v-csslayout-margin {
+	padding-left:10px;
+}
+
+.v-upload .v-button-caption {
+	width: 30px;
+	height: 40px;
+	background-image: url('camera.png');
+	background-repeat: no-repeat;
+	background-position: 0 3px;
+	background-size: 30px 30px;
+	display: block;
+}
+
 /* TabbarView not scrollable by default */
 .v-touchkit-tabbar-wrapper {
 	overflow: auto;

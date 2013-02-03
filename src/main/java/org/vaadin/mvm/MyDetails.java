@@ -3,22 +3,16 @@ package org.vaadin.mvm;
 import java.util.Arrays;
 
 import org.vaadin.mvm.domain.Person;
-import org.vaadin.vol.Layer;
 
-import com.vaadin.addon.touchkit.ui.TouchKitApplication;
 import com.vaadin.addon.touchkit.ui.VerticalComponentGroup;
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.OptionGroup;
 
-public class MyDetails extends CssLayout implements Property.ValueChangeListener {
+public class MyDetails extends CssLayout {
 
-	private OptionGroup optionGroup;
 	private MainView master;
 	private VerticalComponentGroup vcg = new VerticalComponentGroup();
 
@@ -38,17 +32,12 @@ public class MyDetails extends CssLayout implements Property.ValueChangeListener
 		addComponent(vcg);
 		
 		Form form = new Form();
-		Person user = (Person) TouchKitApplication.get().getUser();
+		Person user = MobileVaadinMaps.getUser();
 		if(user != null) {
 			form.setItemDataSource(new BeanItem<Person>(user), Arrays.asList("nickName"));
 			vcg.addComponent(form);
 		}
 		
-	}
-
-	public void valueChange(ValueChangeEvent event) {
-		Layer value = (Layer) optionGroup.getValue();
-		master.setCurrentLayer(value);
 	}
 
 }

@@ -1,6 +1,6 @@
 package org.vaadin.mvm;
 
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 

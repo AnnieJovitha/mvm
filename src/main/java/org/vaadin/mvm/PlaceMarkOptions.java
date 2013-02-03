@@ -9,7 +9,7 @@ import com.vaadin.addon.touchkit.ui.Switch;
 import com.vaadin.addon.touchkit.ui.VerticalComponentGroup;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 
@@ -34,9 +34,9 @@ public class PlaceMarkOptions extends CssLayout {
 	}
 
 	protected void refreshView() {
-		if (getApplication() != null) {
+		if (getUI() != null) {
 			vcg.removeAllComponents();
-			Person user = (Person) MobileVaadinMaps.get().getUser();
+			Person user = (Person) MobileVaadinMaps.getUser();
 			Set<PlaceMark> placeMarks = user.getPlaceMarks();
 			if (placeMarks.isEmpty()) {
 				vcg.addComponent(new Label("You have no placemarks..."));
@@ -46,7 +46,7 @@ public class PlaceMarkOptions extends CssLayout {
 				switch1.setImmediate(true);
 				switch1.setCaption(placeMark.getName());
 				switch1.setValue(master.getDisplayedPlaces().containsKey(placeMark));
-				switch1.addListener(new ValueChangeListener() {
+				switch1.addValueChangeListener(new ValueChangeListener() {
 					public void valueChange(ValueChangeEvent event) {
 						Boolean value = (Boolean) event.getProperty()
 								.getValue();

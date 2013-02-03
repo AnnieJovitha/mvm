@@ -6,7 +6,7 @@ import com.vaadin.addon.touchkit.ui.Switch;
 import com.vaadin.addon.touchkit.ui.VerticalComponentGroup;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.CssLayout;
 
 public class DisplayedPersons extends CssLayout {
@@ -41,7 +41,7 @@ public class DisplayedPersons extends CssLayout {
 			final Person person = persons[i];
 			final Switch s = new Switch(person.getNickName());
 			s.setValue(master.getDisplayedPersons().contains(person));
-			s.addListener(new Property.ValueChangeListener() {
+			s.addValueChangeListener(new Property.ValueChangeListener() {
 				public void valueChange(ValueChangeEvent event) {
 					Boolean b = (Boolean) s.getValue();
 					if (b) {

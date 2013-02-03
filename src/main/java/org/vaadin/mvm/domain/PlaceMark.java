@@ -2,7 +2,7 @@ package org.vaadin.mvm.domain;
 
 import java.io.File;
 
-import org.vaadin.vol.Point;
+import org.vaadin.addon.leaflet.shared.Point;
 
 public class PlaceMark {
 

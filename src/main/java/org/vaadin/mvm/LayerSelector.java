@@ -1,6 +1,6 @@
 package org.vaadin.mvm;
 
-import org.vaadin.vol.Layer;
+import org.vaadin.addon.leaflet.shared.BaseLayer;
 
 import com.vaadin.addon.touchkit.ui.VerticalComponentGroup;
 import com.vaadin.data.Property;
@@ -16,17 +16,16 @@ public class LayerSelector extends VerticalComponentGroup implements Property.Va
 	public LayerSelector(MainView master) {
 		this.master = master;
 		setCaption("Background map");
-		BeanItemContainer<Layer> beanItemContainer = new BeanItemContainer<Layer>(Layer.class);
+		BeanItemContainer<BaseLayer> beanItemContainer = new BeanItemContainer<BaseLayer>(BaseLayer.class);
 		beanItemContainer.addAll(master.getAvailableLayers());
 		optionGroup = new OptionGroup(null, beanItemContainer);
 		optionGroup.setValue(master.getCurrentLayer());
-		optionGroup.addListener(this);
-		optionGroup.setItemCaptionPropertyId("caption");
+		optionGroup.addValueChangeListener(this);
 		addComponent(optionGroup);
 	}
 
 	public void valueChange(ValueChangeEvent event) {
-		Layer value = (Layer) optionGroup.getValue();
+		BaseLayer value = (BaseLayer) optionGroup.getValue();
 		master.setCurrentLayer(value);
 	}
 

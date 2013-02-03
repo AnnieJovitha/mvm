@@ -10,9 +10,9 @@ public class OptionsDialog extends TabBarView {
 	private DisplayedPersons displayedPersons;
 	
 	public OptionsDialog(MainView master) {
+		setSizeUndefined();
 		addStyleName("options-dialog");
 		addStyleName("v-touchkit-backgroundstripes");
-		setWidth("100%");
 		this.master = master;
 		placeMarkOptions  = new PlaceMarkOptions(master);
 		displayedPersons = new DisplayedPersons(master);

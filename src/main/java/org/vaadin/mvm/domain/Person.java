@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.vaadin.vol.Point;
+import org.vaadin.addon.leaflet.shared.Point;
 
 public class Person {
 

@@ -1,10 +1,8 @@
 package org.vaadin.mvm;
 
-import org.vaadin.addon.formbinder.ViewBoundForm;
+import org.vaadin.addon.leaflet.shared.Point;
 import org.vaadin.mvm.domain.Person;
 import org.vaadin.mvm.domain.PlaceMark;
-import org.vaadin.vol.Point;
-import org.vaadin.vol.VectorLayer.VectorDrawnEvent;
 
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
@@ -18,8 +16,10 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Form;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 
 public class PlaceMarkEditor extends Popover implements ClickListener {
 
@@ -46,9 +46,9 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 	}
 
 	public PlaceMarkEditor(MainView master, Component relativeComponent,
-			VectorDrawnEvent event) {
+			Point point) {
 		this.master = master;
-		creatPlaceMarkFromVectorDrawnEvent(event);
+		creatPlaceMarkFromVectorDrawnEvent(point);
 		buildView(relativeComponent);
 	}
 
@@ -72,8 +72,9 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 		latField.setWidth("100%");
 
 		/* Let FormBinder bind our fields */;
-		ViewBoundForm vbf = new ViewBoundForm();
-		vbf.setCustomFieldSources(this);
+		// FIXME implement with V7 goodies
+		Form vbf = new Form();
+//		vbf.setCustomFieldSources(this);
 		vbf.setItemDataSource(new BeanItem<PlaceMark>(placeMark));
 
 		/* Calculate and add distance as "read only" value to view */
@@ -94,12 +95,11 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 		showRelativeTo(relativeComponent);
 	}
 
-	private void creatPlaceMarkFromVectorDrawnEvent(VectorDrawnEvent event) {
+	private void creatPlaceMarkFromVectorDrawnEvent(Point event) {
 		placeMark = new PlaceMark();
-		Person user = (Person) MobileVaadinMaps.get().getUser();
+		Person user = (Person) MobileVaadinMaps.getUser();
 		user.getPlaceMarks().add(placeMark);
-		Point point = event.getVector().getPoints()[0];
-		placeMark.setPoint(point);
+		placeMark.setPoint(event);
 	}
 
 	public void buttonClick(ClickEvent event) {
@@ -109,7 +109,7 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 		} else if (event.getButton() == close) {
 			master.addDisplayedPlaceMark(placeMark);
 		}
-		getParent().removeWindow(this);
+		UI.getCurrent().removeWindow(this);
 	}
 
 }

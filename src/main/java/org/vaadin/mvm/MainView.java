@@ -7,61 +7,51 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.vaadin.addon.leaflet.LeafletClickEvent;
+import org.vaadin.addon.leaflet.LeafletClickListener;
+import org.vaadin.addon.leaflet.LMap;
+import org.vaadin.addon.leaflet.LMarker;
+import org.vaadin.addon.leaflet.LPolyline;
+import org.vaadin.addon.leaflet.shared.BaseLayer;
+import org.vaadin.addon.leaflet.shared.Bounds;
+import org.vaadin.addon.leaflet.shared.Point;
 import org.vaadin.mvm.domain.Person;
 import org.vaadin.mvm.domain.PlaceMark;
-import org.vaadin.vol.Bounds;
-import org.vaadin.vol.Control;
-import org.vaadin.vol.Layer;
-import org.vaadin.vol.OpenLayersMap;
-import org.vaadin.vol.OpenStreetMapLayer;
-import org.vaadin.vol.Point;
-import org.vaadin.vol.PointVector;
-import org.vaadin.vol.PolyLine;
-import org.vaadin.vol.Style;
-import org.vaadin.vol.StyleMap;
-import org.vaadin.vol.Vector;
-import org.vaadin.vol.VectorLayer;
-import org.vaadin.vol.VectorLayer.DrawingMode;
-import org.vaadin.vol.VectorLayer.SelectionMode;
-import org.vaadin.vol.VectorLayer.VectorDrawnEvent;
-import org.vaadin.vol.VectorLayer.VectorDrawnListener;
-import org.vaadin.vol.VectorLayer.VectorSelectedEvent;
-import org.vaadin.vol.VectorLayer.VectorSelectedListener;
-import org.vaadin.vol.XYZLayer;
 
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
-import com.vaadin.addon.touchkit.service.Position;
-import com.vaadin.addon.touchkit.service.PositionCallback;
-import com.vaadin.addon.touchkit.ui.HorizontalComponentGroup;
+import com.vaadin.addon.touchkit.extensions.Geolocator;
+import com.vaadin.addon.touchkit.extensions.PositionCallback;
+import com.vaadin.addon.touchkit.gwt.client.vcom.Position;
+import com.vaadin.addon.touchkit.ui.HorizontalButtonGroup;
 import com.vaadin.addon.touchkit.ui.NavigationView;
-import com.vaadin.addon.touchkit.ui.TouchKitWindow;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.ProgressIndicator;
 
-public class MainView extends NavigationView implements PositionCallback,
-		ClickListener, VectorDrawnListener, VectorSelectedListener {
+public class MainView extends NavigationView implements
+		ClickListener, LeafletClickListener, PositionCallback {
 
 	private static final ThemeResource SETTINGS_ICON = new ThemeResource("settings_g.png");
+	private static final ThemeResource NULL_ICON = new ThemeResource("blank.gif");
 	private static final int MAX_POINTS = 100;
 	private boolean keepTracking = false;
 	private boolean drawRoute = false;
 	private List<Point> lastPoints = new LinkedList<Point>();
 
-	private Map<Person, PointVector> displayedPersons = new HashMap<Person, PointVector>();
-	private Map<PlaceMark, PointVector> displayedPlaces = new HashMap<PlaceMark, PointVector>();
+	private Map<Person, LMarker> displayedPersons = new HashMap<Person, LMarker>();
+	private Map<PlaceMark, LMarker> displayedPlaces = new HashMap<PlaceMark, LMarker>();
 
-	private OpenLayersMap map = new OpenLayersMap();
-	private OpenStreetMapLayer osm = new OpenStreetMapLayer();
-	private VectorLayer vl = new VectorLayer();
+	private LMap map = new LMap();
 
-	private PointVector myPlace = new PointVector();
-	private HorizontalComponentGroup mapTools = new HorizontalComponentGroup();
+	private LMarker myPlace = new LMarker();
+	private HorizontalButtonGroup mapTools = new HorizontalButtonGroup();
 	private Button optionsButton = new Button("⚒", this);
 	private Button locateButton = new Button("ʘ", this);
 	private Button addPlacemark = new Button("⚑", this);
@@ -74,7 +64,7 @@ public class MainView extends NavigationView implements PositionCallback,
 			if (c == progressIndicator) {
 				return "margin-left:-2000px;overflow:hidden;";
 			}
-			return "position:absolute;top:0;right;left:0;bottom:0;";
+			return "position:absolute;top:0;right:0;left:0;bottom:0;";
 		};
 	};
 
@@ -83,11 +73,6 @@ public class MainView extends NavigationView implements PositionCallback,
 		content.addStyleName("mainview");
 		setSizeFull();
 		map.setSizeFull();
-		map.getControls().clear();
-		map.addControl(Control.TouchNavigation);
-		map.addControl(Control.ZoomPanel);
-		map.addControl(Control.ScaleLine);
-		map.addControl(Control.Attribution);
 
 		content.setSizeFull();
 		content.addComponent(map);
@@ -101,10 +86,6 @@ public class MainView extends NavigationView implements PositionCallback,
 		progressIndicator.setPollingInterval(5000);
 		content.addComponent(progressIndicator);
 
-		vl.addListener((VectorDrawnListener) this);
-		vl.addListener((VectorSelectedListener) this);
-		vl.setSelectionMode(SelectionMode.SIMPLE);
-
 		/*
 		 * Android font don't contain all cool unicode characters, as a fallback
 		 * use graphics
@@ -115,95 +96,60 @@ public class MainView extends NavigationView implements PositionCallback,
 		addPlacemark.setIcon(new ThemeResource("placemark_g.png"));
 	}
 
-	@Override
-	public TouchKitWindow getWindow() {
-		return (TouchKitWindow) super.getWindow();
-	}
-
-	private List<Layer> availableLayers = new ArrayList<Layer>();
-	private Layer currentLayer;
-	private PolyLine routeVector;
+	private List<BaseLayer> availableLayers = new ArrayList<BaseLayer>();
+	private BaseLayer currentLayer;
+	private LPolyline routeVector;
 	private boolean automaticDetection;
 
 	private void defineBaseLayers() {
-		buildStyleMap();
-		map.setJsMapOptions("{projection: "
-				+ "new OpenLayers.Projection(\"EPSG:900913\"),"
-				+ "units: \"m\","
-				+ "numZoomLevels: 18,"
-				+ "maxResolution: 156543.0339, "
-				+ "maxExtent: new OpenLayers.Bounds(-20037508, -20037508,20037508, 20037508.34)}");
+		
+		BaseLayer baselayer = new BaseLayer();
+		baselayer.setName("CloudMade");
 
-		osm.setCaption("OpenStreetMap");
-		map.setZoom(13);
+		// Note, this url should only be used for testing purposes. If you wish
+		// to use cloudmade base maps, get your own API key.
+		baselayer
+				.setUrl("http://{s}.tile.cloudmade.com/a751804431c2443ab399100902c651e8/997/256/{z}/{x}/{y}.png");
 
 		// OSM layer as default
-		availableLayers.add(osm);
+		availableLayers.add(baselayer);
 
 		// For users in Finland, some detailed terrain maps by MML, hosted by
 		// kapsi
-		XYZLayer xyzLayer = new XYZLayer();
-		xyzLayer.setUri("http://tiles.kartat.kapsi.fi/peruskartta/${z}/${x}/${y}.png");
-		xyzLayer.setSphericalMercator(true);
-		xyzLayer.setDisplayName("Peruskartta");
-		xyzLayer.setCaption("Peruskartta");
-		xyzLayer.setAttribution("&copy; Maanmittauslaitos, hosted by kartat.kapsi.fi");
-		availableLayers.add(xyzLayer);
+		setCurrentLayer(baselayer);
+		
+		baselayer = new BaseLayer();
+		baselayer.setName("Peruskartta");
+		baselayer.setUrl("http://{s}.kartat.kapsi.fi/peruskartta/{z}/{x}/{y}.png");
+		baselayer.setAttributionString("Maanmittauslaitos, hosted by kartat.kapsi.fi");
+		baselayer.setMaxZoom(18);
+		baselayer.setSubDomains("tile2");
+		baselayer.setDetectRetina(true);
+		availableLayers.add(baselayer);
 
-		// ... and areal imaginary
-		xyzLayer = new XYZLayer();
-		xyzLayer.setUri("http://tiles.kartat.kapsi.fi/ortokuva/${z}/${x}/${y}.png");
-		xyzLayer.setSphericalMercator(true);
-		xyzLayer.setDisplayName("Ortokuva");
-		xyzLayer.setCaption("Ortokuva");
-		xyzLayer.setAttribution("&copy; Maanmittauslaitos, hosted by kartat.kapsi.fi");
-		availableLayers.add(xyzLayer);
-
-		setCurrentLayer(osm);
-
-		map.addLayer(vl);
+		baselayer = new BaseLayer();
+		baselayer.setName("Ortokuva");
+		baselayer.setUrl("http://{s}.kartat.kapsi.fi/ortokuva/{z}/{x}/{y}.png");
+		baselayer.setAttributionString("Maanmittauslaitos, hosted by kartat.kapsi.fi");
+		baselayer.setMaxZoom(18);
+		baselayer.setSubDomains("tile2");
+		availableLayers.add(baselayer);
+		
 	}
 
-	private void buildStyleMap() {
-		StyleMap styleMap = new StyleMap();
-		styleMap.setExtendDefault(true);
-
-		Style style = new Style();
-		style.setStrokeColor("#00F9FF");
-		style.setFillColor("#00F9FF");
-		style.setPointRadius(12);
-		styleMap.setStyle("other", style);
-
-		style = new Style();
-		style.setStrokeColor("#F200FF");
-		style.setFillColor("#F200FF");
-		style.setPointRadius(12);
-		styleMap.setStyle("default", style);
-
-		style = new Style();
-		style.setStrokeColor("#00FF06");
-		style.setFillColor("#00FF06");
-		style.setPointRadius(12);
-		styleMap.setStyle("placemark", style);
-
-		vl.setStyleMap(styleMap);
-
-	}
-
-	public List<Layer> getAvailableLayers() {
+	public List<BaseLayer> getAvailableLayers() {
 		return availableLayers;
 	}
 
-	public void setCurrentLayer(Layer l) {
-		map.addLayer(l);
-		if (currentLayer != null) {
-			map.removeLayer(currentLayer);
-		}
+	public void setCurrentLayer(BaseLayer l) {
+		map.setBaseLayers(l);
 		currentLayer = l;
-		getUser().setLastLayerIndex(availableLayers.indexOf(l));
+		int indexOf = availableLayers.indexOf(l);
+		Person user = getUser();
+		user.setLastLayerIndex(indexOf);
 	}
 
-	public Layer getCurrentLayer() {
+	public BaseLayer getCurrentLayer() {
 		return currentLayer;
 	}
 
@@ -217,17 +163,17 @@ public class MainView extends NavigationView implements PositionCallback,
 
 	public void detectPosition(boolean automaticDetection) {
 		this.automaticDetection = automaticDetection;
-		getWindow().detectCurrentPosition(this);
+		Geolocator.detect(this);
 	}
 
 	public Person getUser() {
-		return ((MobileVaadinMaps) getApplication()).getUser();
+		return MobileVaadinMaps.getUser();
 	}
 
 	public void onSuccess(Position position) {
 		getUser().setAccuracy(position.getAccuracy());
 		getUser().setLastLocation(
-				new Point(position.getLongitude(), position.getLatitude()));
+				new Point(position.getLatitude(),position.getLongitude()));
 		updateMap();
 	}
 	
@@ -240,21 +186,25 @@ public class MainView extends NavigationView implements PositionCallback,
 		if (lastPoints.size() > MAX_POINTS) {
 			lastPoints.remove(0);
 		}
-		myPlace.setPoints(getUser().getLastLocation());
+		myPlace.setPoint(getUser().getLastLocation());
 		if (myPlace.getParent() == null) {
-			vl.addVector(myPlace);
-			map.setZoom(10);
+			map.addComponent(myPlace);
+			map.setZoomLevel(10);
 		}
 		if (keepTracking && isTrackingEnabled()) {
 			// TODO TouchKit should support continuous tracking
+			
+			final VaadinSession session = getSession();
 			new Thread() {
 				public void run() {
 					try {
 						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-					}
-					synchronized (getApplication()) {
+						session.lock();
 						detectPosition(true);
+					} catch (InterruptedException e) {
+						
+					} finally {
+						session.unlock();
 					}
 				};
 			}.start();
@@ -267,9 +217,9 @@ public class MainView extends NavigationView implements PositionCallback,
 
 	private void setExtent() {
 		Bounds bounds = new Bounds(myPlace.getPoint());
-		Collection<PointVector> values = displayedPersons.values();
-		for (PointVector pointVector : values) {
-			bounds.extend(pointVector.getPoint());
+		Collection<LMarker> values = displayedPersons.values();
+		for (LMarker LeafletMarker : values) {
+			bounds.extend(LeafletMarker.getPoint());
 		}
 		if (values.isEmpty()) {
 			map.setCenter(bounds);
@@ -281,8 +231,8 @@ public class MainView extends NavigationView implements PositionCallback,
 	private void updateMyRoute() {
 		if (drawRoute) {
 			if (routeVector == null) {
-				routeVector = new PolyLine();
-				vl.addComponent(routeVector);
+				routeVector = new LPolyline();
+				map.addComponent(routeVector);
 			}
 			routeVector.setPoints(lastPoints.toArray(new Point[lastPoints
 					.size()]));
@@ -303,23 +253,34 @@ public class MainView extends NavigationView implements PositionCallback,
 				detectPosition(false);
 			}
 		} else if (event.getButton() == addPlacemark) {
-			if (vl.getDrawingMode() == DrawingMode.POINT) {
+			if (drawing) {
 				disableDrawingMode();
 			} else {
 				enableDrawingMode();
 			}
 		}
 	}
+	
+	LeafletClickListener drawingMode = new LeafletClickListener() {
+		
+		@Override
+		public void onClick(LeafletClickEvent event) {
+			new PlaceMarkEditor(MainView.this, addPlacemark, event.getPoint());
+			disableDrawingMode();
+		}
+	};
+	private boolean drawing = false;
 
 	private void enableDrawingMode() {
 		addPlacemark.addStyleName("green");
-		vl.setDrawingMode(DrawingMode.POINT);
-
+		map.addClickListener(drawingMode);
+		drawing = true;
 	}
 
 	private void disableDrawingMode() {
 		addPlacemark.removeStyleName("green");
-		vl.setDrawingMode(DrawingMode.NONE);
+		map.removeClickListener(drawingMode);
+		drawing = false;
 	}
 
 	private void toggleOptions() {
@@ -331,6 +292,8 @@ public class MainView extends NavigationView implements PositionCallback,
 		} else {
 			addStyleName("options-on");
 			optionsButton.setIcon(null);
+			// V fuk%€ng 7, #10929 
+			optionsButton.setIcon(NULL_ICON);
 			optionsButton.setCaption("✓");
 			mapTools.setVisible(false);
 			settings.refresh();
@@ -378,78 +341,74 @@ public class MainView extends NavigationView implements PositionCallback,
 
 	public void addDisplayedPersons(Person p) {
 		if (p.getLastLocation() != null) {
-			PointVector pointVector = new PointVector();
-			pointVector.setRenderIntent("other");
-			pointVector.setPoints(p.getLastLocation());
-			pointVector.setData(p);
-			displayedPersons.put(p, pointVector);
-			vl.addVector(pointVector);
+			LMarker marker = new LMarker();
+			marker.addClickListener(this);
+//			LeafletMarker.setRenderIntent("other");
+			marker.setPoint(p.getLastLocation());
+			marker.setData(p);
+			displayedPersons.put(p, marker);
+			map.addComponent(marker);
 		}
 	}
 
 	public void removeDisplayedPersons(Person person) {
-		PointVector pointVector = displayedPersons.remove(person);
-		vl.removeComponent(pointVector);
+		LMarker m = displayedPersons.remove(person);
+		map.removeComponent(m);
 	}
 
-	public void vectorDrawn(VectorDrawnEvent event) {
-		new PlaceMarkEditor(this, addPlacemark, event);
-		disableDrawingMode();
-	}
-
-	public Map<PlaceMark, PointVector> getDisplayedPlaces() {
+	public Map<PlaceMark, LMarker> getDisplayedPlaces() {
 		return displayedPlaces;
 	}
 
 	public void addDisplayedPlaceMark(PlaceMark pm) {
-		PointVector pointVector = new PointVector();
-		pointVector.setRenderIntent("placemark");
-		pointVector.setPoints(new Point(pm.getLon(), pm.getLat()));
-		pointVector.setData(pm);
-		displayedPlaces.put(pm, pointVector);
-		vl.addVector(pointVector);
+		LMarker marker = new LMarker();
+		marker.addClickListener(this);
+//		marker.setRenderIntent("placemark");
+		marker.setPoint(new Point(pm.getLon(), pm.getLat()));
+		marker.setData(pm);
+		displayedPlaces.put(pm, marker);
+		map.addComponent(marker);
 	}
 
 	public void removeDisplayedPlaceMark(PlaceMark pm) {
-		PointVector remove = displayedPlaces.remove(pm);
+		LMarker remove = displayedPlaces.remove(pm);
 		if (remove != null) {
-			vl.removeComponent(remove);
+			map.removeComponent(remove);
 		}
 	}
 
-	public void setDisplayedPlaces(Map<PlaceMark, PointVector> displayedPlaces) {
+	public void setDisplayedPlaces(Map<PlaceMark, LMarker> displayedPlaces) {
 		this.displayedPlaces = displayedPlaces;
 	}
 
-	public void vectorSelected(VectorSelectedEvent event) {
-		Vector vector = event.getVector();
-		if (vector == myPlace) {
-			getWindow().showNotification("That is you!");
-		} else {
-			
-
-			Object data = vector.getData();
-			if (data instanceof Person) {
-				showFriendDetails(vector, data);
-			} else if (data instanceof PlaceMark) {
-				new PlaceMarkEditor(this, addPlacemark, (PlaceMark) data);
-			}
-		}
-		vl.setSelectedVector(null);
-	}
-
-	private void showFriendDetails(Vector vector, Object data) {
+	private void showFriendDetails(LMarker vector, Object data) {
 		LatLng point1 = new LatLng(myPlace.getPoint().getLat(), myPlace
 				.getPoint().getLon());
-		LatLng point2 = new LatLng(vector.getPoints()[0].getLat(),
-				vector.getPoints()[0].getLon());
+		LatLng point2 = new LatLng(vector.getPoint().getLat(),
+				vector.getPoint().getLon());
 		double distanceInKilometers = LatLngTool.distance(point1, point2,
 				LengthUnit.KILOMETER);
 		
 		Person p = (Person) data;
-		getWindow().showNotification(
+		Notification.show(
 				String.format("That is your friend %s, %.2f km away",
 						p.getNickName(), distanceInKilometers));
+	}
+
+	@Override
+	public void onClick(LeafletClickEvent event) {
+		LMarker marker = (LMarker) event.getConnector();
+		if (marker == myPlace) {
+			Notification.show("That is you!");
+		} else {
+			Object data = marker.getData();
+			if (data instanceof Person) {
+				showFriendDetails(marker, data);
+			} else if (data instanceof PlaceMark) {
+				new PlaceMarkEditor(this, addPlacemark, (PlaceMark) data);
+			}
+		}
+		
 	}
 
 }

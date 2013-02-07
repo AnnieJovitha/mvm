@@ -45,6 +45,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client-compiler</artifactId>
+			<version>${vaadin.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.vaadin.addon</groupId>
 			<artifactId>vaadin-touchkit-agpl</artifactId>
 			<version>3.0.0-SNAPSHOT</version>
@@ -59,7 +65,7 @@
 		<dependency>
 			<groupId>org.vaadin.addon</groupId>
 			<artifactId>v-leaflet</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.2</version>
 		</dependency>
 
 		<!-- Not updated to V7 -->
@@ -148,6 +154,8 @@
 					<compileReport>false</compileReport>
 					<strict>true</strict>
 					<style>OBF</style>
+					<force>false</force>
+					<disableRunAsync>true</disableRunAsync>
 					<persistentunitcachedir>${project.build.directory}</persistentunitcachedir>
 					<deploy>${project.build.directory}/gwt-deploy</deploy>
 					<enableClosureCompiler>true</enableClosureCompiler>

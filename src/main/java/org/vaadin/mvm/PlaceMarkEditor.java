@@ -31,10 +31,10 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 
 	private PlaceMark placeMark;
 
-	private PhotoField photoField = new PhotoField();
-	private TextField latField = new TextField("Lat");
-	private TextField lonField = new TextField("Lon");
-	private TextField nameField = new TextField("Name");
+	private PhotoField photo = new PhotoField();
+	private TextField lat = new TextField("Lat");
+	private TextField lon = new TextField("Lon");
+	private TextField name = new TextField("Name");
 	private Label distance = new Label();
 
 	private MainView master;
@@ -65,17 +65,15 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 
 
 		VerticalComponentGroup verticalComponentGroup = new VerticalComponentGroup();
-		verticalComponentGroup.addComponent(nameField);
-		nameField.setWidth("100%");
-		verticalComponentGroup.addComponent(lonField);
-		lonField.setWidth("100%");
-		verticalComponentGroup.addComponent(latField);
-		latField.setWidth("100%");
+		verticalComponentGroup.addComponent(name);
+		name.setWidth("100%");
+		verticalComponentGroup.addComponent(lon);
+		lon.setWidth("100%");
+		verticalComponentGroup.addComponent(lat);
+		lat.setWidth("100%");
 
 		FieldGroup fieldGroup = new FieldGroup(new BeanItem<PlaceMark>(placeMark));
-		fieldGroup.bind(latField, "lat");
-		fieldGroup.bind(lonField, "lon");
-		fieldGroup.bind(nameField, "name");
+		fieldGroup.bindMemberFields(this);
 		
 		/* Calculate and add distance as "read only" value to view */
 		Point myPlace = master.getLastPoints().get(
@@ -88,7 +86,7 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 		distance.setValue(String.format("%.2f km away", distanceInKilometers));
 		verticalComponentGroup.addComponent(distance);
 
-		verticalComponentGroup.addComponent(photoField);
+		verticalComponentGroup.addComponent(photo);
 		l.addComponent(verticalComponentGroup);
 		
 		c.setContent(l);

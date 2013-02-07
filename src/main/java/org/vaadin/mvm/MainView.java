@@ -83,8 +83,8 @@ public class MainView extends NavigationView implements
 		mapTools.addComponent(addPlacemark);
 		setLeftComponent(mapTools);
 
-		progressIndicator.setPollingInterval(5000);
-		content.addComponent(progressIndicator);
+//		progressIndicator.setPollingInterval(5000);
+//		content.addComponent(progressIndicator);
 
 		/*
 		 * Android font don't contain all cool unicode characters, as a fallback
@@ -363,8 +363,7 @@ public class MainView extends NavigationView implements
 	public void addDisplayedPlaceMark(PlaceMark pm) {
 		LMarker marker = new LMarker();
 		marker.addClickListener(this);
-//		marker.setRenderIntent("placemark");
-		marker.setPoint(new Point(pm.getLon(), pm.getLat()));
+		marker.setPoint(new Point(pm.getLat(), pm.getLon()));
 		marker.setData(pm);
 		displayedPlaces.put(pm, marker);
 		map.addComponent(marker);

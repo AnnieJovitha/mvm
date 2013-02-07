@@ -1,4 +1,4 @@
-@import "../base/styles.css";
+@import "../base/legacy-styles.css";
 
 .v-app {
 	/* Gray background to make flip effect more visible. */

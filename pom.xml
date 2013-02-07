@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<vaadin.version>7.0.0.rc2</vaadin.version>
+		<vaadin.version>7.0-SNAPSHOT</vaadin.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -59,9 +59,9 @@
 		<dependency>
 			<groupId>org.vaadin.addon</groupId>
 			<artifactId>v-leaflet</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
-		
+
 		<!-- Not updated to V7 -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.vaadin.addons</groupId> -->
@@ -134,22 +134,24 @@
 			<plugin>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
-				<version>7.0.0.rc2</version>
+				<version>7.0.0</version>
 				<configuration>
+					<module>org.vaadin.mvm.gwt.AppWidgetSet</module>
 					<extraJvmArgs>-Xmx2g -Xss1024k</extraJvmArgs>
 					<!-- <runTarget>mobilemail</runTarget> -->
 					<!-- We are doing "inplace" but into subdir VAADIN/widgetsets. This 
 						way compatible with Vaadin eclipse plugin. -->
-					<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets
-					</webappDirectory>
-					<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets
-					</hostedWebapp>
+					<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets</webappDirectory>
 					<noServer>true</noServer>
 					<!-- Remove draftCompile when project is ready -->
 					<draftCompile>false</draftCompile>
 					<compileReport>false</compileReport>
 					<strict>true</strict>
 					<style>OBF</style>
+					<persistentunitcachedir>${project.build.directory}</persistentunitcachedir>
+					<deploy>${project.build.directory}/gwt-deploy</deploy>
+					<enableClosureCompiler>true</enableClosureCompiler>
+					<runTarget>http://localhost:8080/BasicTest</runTarget>
 				</configuration>
 				<executions>
 					<execution>

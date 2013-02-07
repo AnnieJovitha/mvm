@@ -10,6 +10,7 @@ import com.javadocmd.simplelatlng.util.LengthUnit;
 import com.vaadin.addon.touchkit.ui.NavigationView;
 import com.vaadin.addon.touchkit.ui.Popover;
 import com.vaadin.addon.touchkit.ui.VerticalComponentGroup;
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -31,7 +32,7 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 	private PlaceMark placeMark;
 
 	private PhotoField photoField = new PhotoField();
-	private TextField latField = new TextField("Lan");
+	private TextField latField = new TextField("Lat");
 	private TextField lonField = new TextField("Lon");
 	private TextField nameField = new TextField("Name");
 	private Label distance = new Label();
@@ -71,12 +72,11 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 		verticalComponentGroup.addComponent(latField);
 		latField.setWidth("100%");
 
-		/* Let FormBinder bind our fields */;
-		// FIXME implement with V7 goodies
-		Form vbf = new Form();
-//		vbf.setCustomFieldSources(this);
-		vbf.setItemDataSource(new BeanItem<PlaceMark>(placeMark));
-
+		FieldGroup fieldGroup = new FieldGroup(new BeanItem<PlaceMark>(placeMark));
+		fieldGroup.bind(latField, "lat");
+		fieldGroup.bind(lonField, "lon");
+		fieldGroup.bind(nameField, "name");
+		
 		/* Calculate and add distance as "read only" value to view */
 		Point myPlace = master.getLastPoints().get(
 				master.getLastPoints().size() - 1);

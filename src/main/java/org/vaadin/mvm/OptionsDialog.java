@@ -11,6 +11,7 @@ public class OptionsDialog extends TabBarView {
 	
 	public OptionsDialog(MainView master) {
 		setSizeUndefined();
+		setWidth("100%");
 		addStyleName("options-dialog");
 		addStyleName("v-touchkit-backgroundstripes");
 		this.master = master;

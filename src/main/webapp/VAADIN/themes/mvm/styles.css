@@ -35,6 +35,10 @@
 	-ms-flex: 0;
 }
 
+.v-ie .v-touchkit-componentgroup-row-full > .v-touchkit-componentgroup-cell {
+	-ms-flex: 1;
+}
+
 /* ROTATION effect for options view */
 .mainview>div {
   	-webkit-perspective: 1000;

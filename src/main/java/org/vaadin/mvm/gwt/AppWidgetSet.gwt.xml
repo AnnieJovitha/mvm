@@ -8,6 +8,7 @@
 
 	<inherits name="com.vaadin.addon.touchkit.gwt.TouchKitWidgetSet" />
 	<inherits name="org.vaadin.addon.leaflet.Widgetset" />
+	<inherits name="org.vaadin.easyuploads.Widgetset" />
 
 	<generate-with class="org.vaadin.mvm.gwt.OptimizedWidgetBundle">
 		<when-type-assignable
@@ -16,11 +17,12 @@
 
 	<set-configuration-property
 		name='touchkit.manifestlinker.additionalCacheRoot' value='src/main/webapp/VAADIN/themes/mvm:../../../VAADIN/themes/mvm' />
+		
+	<set-property name="user.agent" value="safari,ie9"/>
+
 
 <!-- 	This would be nice little optimization, but e.g. leaflet icons from -->
 <!-- 	widgetset fails. -->
 	<!-- <add-linker name="sso" /> -->
-
-	<!-- <inherits name="org.vaadin.easyuploads.EasyuploadsWidgetset" /> -->
 
 </module>

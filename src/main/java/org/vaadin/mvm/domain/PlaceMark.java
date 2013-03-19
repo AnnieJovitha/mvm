@@ -24,7 +24,7 @@ public class PlaceMark {
 	private double lon;
 	private double lat;
 	private String name = "Placemark " + id;
-//	private File photo = new File(MVM_IMAGES, id + ".jpg");
+	private File photo = new File(MVM_IMAGES, id + ".jpg");
 
 	public double getLon() {
 		return lon;
@@ -50,13 +50,13 @@ public class PlaceMark {
 		this.name = name;
 	}
 
-//	public File getPhoto() {
-//		return photo;
-//	}
-//
-//	public void setPhoto(File photo) {
-//		this.photo = photo;
-//	}
+	public File getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(File photo) {
+		this.photo = photo;
+	}
 
 	public void setPoint(Point point) {
 		lon = point.getLon();

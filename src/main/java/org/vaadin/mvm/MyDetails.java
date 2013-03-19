@@ -36,6 +36,7 @@ public class MyDetails extends CssLayout {
 		Person user = MobileVaadinMaps.getUser();
 		vcg.addComponent(nickName);
 		FieldGroup fieldGroup = new FieldGroup();
+		fieldGroup.setBuffered(false);
 		fieldGroup.setItemDataSource(new BeanItem<Person>(user));
 		fieldGroup.buildAndBindMemberFields(this);
 		

@@ -14,6 +14,7 @@ import com.vaadin.addon.touchkit.gwt.client.vcom.EmailFieldConnector;
 import com.vaadin.addon.touchkit.gwt.client.vcom.GeolocatorConnector;
 import com.vaadin.addon.touchkit.gwt.client.vcom.HorizontalButtonGroupConnector;
 import com.vaadin.addon.touchkit.gwt.client.vcom.NumberFieldConnector;
+import com.vaadin.addon.touchkit.gwt.client.vcom.OfflineModeConnector;
 import com.vaadin.addon.touchkit.gwt.client.vcom.SwitchConnector;
 import com.vaadin.addon.touchkit.gwt.client.vcom.TabBarConnector;
 import com.vaadin.addon.touchkit.gwt.client.vcom.VerticalComponentGroupConnector;
@@ -22,8 +23,11 @@ import com.vaadin.addon.touchkit.gwt.client.vcom.navigation.NavigationViewConnec
 import com.vaadin.addon.touchkit.gwt.client.vcom.popover.PopoverConnector;
 import com.vaadin.client.ui.button.ButtonConnector;
 import com.vaadin.client.ui.csslayout.CssLayoutConnector;
+import com.vaadin.client.ui.customfield.CustomFieldConnector;
+import com.vaadin.client.ui.image.ImageConnector;
 import com.vaadin.client.ui.label.LabelConnector;
 import com.vaadin.client.ui.optiongroup.OptionGroupConnector;
+import com.vaadin.client.ui.progressindicator.ProgressIndicatorConnector;
 import com.vaadin.client.ui.textfield.TextFieldConnector;
 import com.vaadin.client.ui.ui.UIConnector;
 import com.vaadin.client.ui.upload.UploadConnector;
@@ -53,6 +57,10 @@ public class OptimizedWidgetBundle extends ConnectorBundleLoaderFactory {
 		eagerWidgets.add(UploadConnector.class.getName());
 		eagerWidgets.add(GeolocatorConnector.class.getName());
 		eagerWidgets.add(HorizontalButtonGroupConnector.class.getName());
+		eagerWidgets.add(OfflineModeConnector.class.getName());
+		eagerWidgets.add(CustomFieldConnector.class.getName());
+		eagerWidgets.add(ImageConnector.class.getName());
+		eagerWidgets.add(ProgressIndicatorConnector.class.getName());
 		eagerWidgets.add(UIConnector.class.getName());
 	}
 

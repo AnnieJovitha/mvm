@@ -9,7 +9,7 @@ public class MyUIProvider extends UIProvider {
     @Override
     public Class<? extends UI> getUIClass(UIClassSelectionEvent event) {
         String userAgent = event.getRequest().getHeader("user-agent").toLowerCase();
-        if(userAgent.contains("webkit")) {
+        if(userAgent.contains("webkit") || userAgent.contains("msie 10")) {
         	return MobileVaadinMaps.class;
         } else {
             return MyFallbackUI.class;

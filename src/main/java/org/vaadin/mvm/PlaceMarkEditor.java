@@ -17,7 +17,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Form;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -73,6 +72,7 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 		lat.setWidth("100%");
 
 		FieldGroup fieldGroup = new FieldGroup(new BeanItem<PlaceMark>(placeMark));
+		fieldGroup.setBuffered(false);
 		fieldGroup.bindMemberFields(this);
 		
 		/* Calculate and add distance as "read only" value to view */

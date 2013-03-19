@@ -1,8 +1,38 @@
-@import "../base/legacy-styles.css";
-
 .v-app {
 	/* Gray background to make flip effect more visible. */
 	background: rgb(82, 85, 90) !important;
+	/* Disable selection etc. */
+	-ms-touch-action: none;
+}
+
+.v-ie .v-touchkit-navbar,.v-touchkit-navpanel-placeholder>div,.v-touchkit-popover.v-touchkit-fullscreen .v-touchkit-navpanel-placeholder>div {
+	background: -ms-linear-gradient(top, #edeeef 0%, #c9cccf 100%);
+}
+
+.v-ie .v-touchkit-tabbar-toolbar .v-touchkit-toolbar {
+	background: -ms-linear-gradient(top, #48494b 0%, #333435 49%, #2e2f30 51%, #222324 100%) ;
+}
+
+.v-ie .v-touchkit-navbar .v-button-wrap,
+.v-ie .v-touchkit-horizontalbuttongroup {
+	background: -ms-linear-gradient(top, rgba(255,255,255,.23) 0%, rgba(73,73,73,.23) 100%);
+}
+
+/*VerticalComponentGroup flex box layout */
+
+.v-ie .v-touchkit-componentgroup-row-cap {
+	-ms-flex-align: center;
+}
+.v-ie .v-touchkit-componentgroup-row {
+	display: -ms-flexbox;
+}
+
+.v-ie .v-touchkit-componentgroup-row-cap > .v-caption {
+	-ms-flex: 1;
+}
+
+.v-ie .v-touchkit-componentgroup-row-cap > .v-touchkit-componentgroup-cell {
+	-ms-flex: 0;
 }
 
 /* ROTATION effect for options view */
@@ -18,6 +48,10 @@
   	-webkit-transition: -webkit-transform 1.0s linear;
 	-webkit-backface-visibility: hidden;
 	-webkit-transform-style: preserve-3d;
+	transform: rotateY(180deg);	
+  	transition: transform 1.0s linear;
+	backface-visibility: hidden;
+	transform-style: preserve-3d;
 }
 
 .v-leaflet {
@@ -25,20 +59,28 @@
 	-webkit-transform: rotateY(0deg);	
 	-webkit-backface-visibility: hidden;
 	-webkit-transform-style: preserve-3d;
+	transform: rotateY(0deg);	
+  	transition: transform 1.0s linear;
+	backface-visibility: hidden;
+	transform-style: preserve-3d;
 }
 
 .options-on .options-dialog {
 	-webkit-transform: rotateY(0deg);	
 	-webkit-backface-visibility: hidden;
+	transform: rotateY(0deg);	
+	backface-visibility: hidden;
 }
 
 .options-on .v-leaflet {
 	-webkit-transform: rotateY(-180deg);	
 	-webkit-backface-visibility: hidden;
+	transform: rotateY(-180deg);	
+	backface-visibility: hidden;
 }
 
 /* Bigger font for buttons in nav bar (we use unicode characters as icons in this app) */
-.v-tk .v-touchkit-navbar .v-button .v-button-wrap .v-button-caption {
+.v-touchkit-navbar .v-button-caption {
 	font-size: 26px;
 }
 

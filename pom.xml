@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<vaadin.version>7.0-SNAPSHOT</vaadin.version>
+		<vaadin.version>7.1-SNAPSHOT</vaadin.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -32,6 +32,18 @@
 			<url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
 		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>vaadin-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -68,12 +80,11 @@
 			<version>0.0.2</version>
 		</dependency>
 
-		<!-- Not updated to V7 -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.vaadin.addons</groupId> -->
-		<!-- <artifactId>easyuploads</artifactId> -->
-		<!-- <version>0.5.1</version> -->
-		<!-- </dependency> -->
+		<dependency>
+		<groupId>org.vaadin.addon</groupId>
+		<artifactId>easyuploads</artifactId>
+		<version>7.0.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.javadocmd</groupId>
@@ -86,6 +97,20 @@
 			<artifactId>jetty-servlets</artifactId>
 			<version>8.1.7.v20120910</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpasyncclient</artifactId>
+			<version>4.0-beta3</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+
 
 		<!-- <dependency> -->
 		<!-- <groupId>org.eclipse.persistence</groupId> -->
@@ -140,7 +165,7 @@
 			<plugin>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
-				<version>7.0.0</version>
+				<version>7.0-SNAPSHOT</version>
 				<configuration>
 					<module>org.vaadin.mvm.gwt.AppWidgetSet</module>
 					<extraJvmArgs>-Xmx2g -Xss1024k</extraJvmArgs>
@@ -154,7 +179,7 @@
 					<compileReport>false</compileReport>
 					<strict>true</strict>
 					<style>OBF</style>
-					<force>false</force>
+<!-- 					<force>false</force> -->
 					<disableRunAsync>true</disableRunAsync>
 					<persistentunitcachedir>${project.build.directory}</persistentunitcachedir>
 					<deploy>${project.build.directory}/gwt-deploy</deploy>

@@ -39,7 +39,6 @@ public class MainView extends NavigationView implements
 		ClickListener, LeafletClickListener, PositionCallback {
 
 	private static final ThemeResource SETTINGS_ICON = new ThemeResource("settings_g.png");
-	private static final ThemeResource NULL_ICON = new ThemeResource("blank.gif");
 	private static final int MAX_POINTS = 100;
 	private boolean keepTracking = false;
 	private boolean drawRoute = false;
@@ -94,6 +93,7 @@ public class MainView extends NavigationView implements
 		optionsButton.setIcon(SETTINGS_ICON);
 		addPlacemark.setCaption(null);
 		addPlacemark.setIcon(new ThemeResource("placemark_g.png"));
+		myPlace.addClickListener(this);
 	}
 
 	private List<BaseLayer> availableLayers = new ArrayList<BaseLayer>();
@@ -120,7 +120,7 @@ public class MainView extends NavigationView implements
 		
 		baselayer = new BaseLayer();
 		baselayer.setName("Peruskartta");
-		baselayer.setUrl("http://{s}.kartat.kapsi.fi/peruskartta/{z}/{x}/{y}.png");
+		baselayer.setUrl(Servlet.contextPath + "/tiles/peruskartta/{z}/{x}/{y}.png");
 		baselayer.setAttributionString("Maanmittauslaitos, hosted by kartat.kapsi.fi");
 		baselayer.setMaxZoom(18);
 		baselayer.setSubDomains("tile2");
@@ -129,7 +129,7 @@ public class MainView extends NavigationView implements
 
 		baselayer = new BaseLayer();
 		baselayer.setName("Ortokuva");
-		baselayer.setUrl("http://{s}.kartat.kapsi.fi/ortokuva/{z}/{x}/{y}.png");
+		baselayer.setUrl(Servlet.contextPath + "/tiles/ortokuva/{z}/{x}/{y}.png");
 		baselayer.setAttributionString("Maanmittauslaitos, hosted by kartat.kapsi.fi");
 		baselayer.setMaxZoom(18);
 		baselayer.setSubDomains("tile2");
@@ -292,8 +292,6 @@ public class MainView extends NavigationView implements
 		} else {
 			addStyleName("options-on");
 			optionsButton.setIcon(null);
-			// V fuk%€ng 7, #10929 
-			optionsButton.setIcon(NULL_ICON);
 			optionsButton.setCaption("✓");
 			mapTools.setVisible(false);
 			settings.refresh();

@@ -82,8 +82,8 @@ public class MainView extends NavigationView implements
 		mapTools.addComponent(addPlacemark);
 		setLeftComponent(mapTools);
 
-//		progressIndicator.setPollingInterval(5000);
-//		content.addComponent(progressIndicator);
+		progressIndicator.setPollingInterval(5000);
+		content.addComponent(progressIndicator);
 
 		/*
 		 * Android font don't contain all cool unicode characters, as a fallback
@@ -211,6 +211,8 @@ public class MainView extends NavigationView implements
 		}
 		if (!automaticDetection) {
 			setExtent();
+			Point p = getUser().getLastLocation();
+			map.setCenter(p.getLat(), p.getLon());
 		}
 		updateMyRoute();
 	}
@@ -230,7 +232,7 @@ public class MainView extends NavigationView implements
 
 	private void updateMyRoute() {
 		if (drawRoute) {
-			if (routeVector == null) {
+			if (routeVector == null || routeVector.getParent() != map) {
 				routeVector = new LPolyline();
 				map.addComponent(routeVector);
 			}

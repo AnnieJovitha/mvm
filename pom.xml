@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>org.vaadin.addon</groupId>
 			<artifactId>v-leaflet</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -168,7 +168,7 @@
 				<version>7.0-SNAPSHOT</version>
 				<configuration>
 					<module>org.vaadin.mvm.gwt.AppWidgetSet</module>
-					<extraJvmArgs>-Xmx2g -Xss1024k</extraJvmArgs>
+					<extraJvmArgs>-Xmx2g -XX:MaxPermSize=512m</extraJvmArgs>
 					<!-- <runTarget>mobilemail</runTarget> -->
 					<!-- We are doing "inplace" but into subdir VAADIN/widgetsets. This 
 						way compatible with Vaadin eclipse plugin. -->

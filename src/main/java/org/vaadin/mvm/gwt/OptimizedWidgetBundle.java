@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.vaadin.addon.leaflet.client.vaadin.LeafletMapConnector;
 import org.vaadin.addon.leaflet.client.vaadin.LeafletMarkerConnector;
+import org.vaadin.addon.leaflet.client.vaadin.LeafletPolylineConnector;
 
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
@@ -50,6 +51,7 @@ public class OptimizedWidgetBundle extends ConnectorBundleLoaderFactory {
 		eagerWidgets.add(PopoverConnector.class.getName());
 		eagerWidgets.add(LeafletMapConnector.class.getName());
 		eagerWidgets.add(LeafletMarkerConnector.class.getName());
+		eagerWidgets.add(LeafletPolylineConnector.class.getName());
 		eagerWidgets.add(LabelConnector.class.getName());
 		eagerWidgets.add(VerticalComponentGroupConnector.class.getName());
 		eagerWidgets.add(TextFieldConnector.class.getName());

@@ -1,8 +1,15 @@
+/* Disable selection etc. */
+html {
+	-ms-touch-action: none;
+	-ms-touch-select: none;
+}
+.v-button {
+	-ms-touch-select: none;
+}
+
 .v-app {
 	/* Gray background to make flip effect more visible. */
 	background: rgb(82, 85, 90) !important;
-	/* Disable selection etc. */
-	-ms-touch-action: none;
 }
 
 .v-ie .v-touchkit-navbar,.v-touchkit-navpanel-placeholder>div,.v-touchkit-popover.v-touchkit-fullscreen .v-touchkit-navpanel-placeholder>div {
@@ -16,6 +23,10 @@
 .v-ie .v-touchkit-navbar .v-button-wrap,
 .v-ie .v-touchkit-horizontalbuttongroup {
 	background: -ms-linear-gradient(top, rgba(255,255,255,.23) 0%, rgba(73,73,73,.23) 100%);
+}
+
+.v-ie .v-Notification {
+	background: -ms-linear-gradient(top, rgba(93,101,109,.86) 0%, rgba(40,45,51,.86) 25%, rgba(24,25,26,.9) 100%);
 }
 
 /*VerticalComponentGroup flex box layout */

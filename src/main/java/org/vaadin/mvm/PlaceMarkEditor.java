@@ -105,6 +105,7 @@ public class PlaceMarkEditor extends Popover implements ClickListener {
 			master.removeDisplayedPlaceMark(placeMark);
 			master.getUser().getPlaceMarks().remove(placeMark);
 		} else if (event.getButton() == close) {
+			master.removeDisplayedPlaceMark(placeMark);
 			master.addDisplayedPlaceMark(placeMark);
 		}
 		UI.getCurrent().removeWindow(this);
